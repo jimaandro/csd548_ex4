@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeting-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: greeting-controller
+  template:
+    metadata:
+      labels:
+        app: greeting-controller
+    spec:
+      containers:
+      - name: greeting-controller
+        image: jimaandron/greeting-controller:latest
+        imagePullPolicy: Always
+        env:
+        - name: KUBERNETES_SERVICE_HOST
+          value: "kubernetes.default.svc"
+        - name: KUBERNETES_SERVICE_PORT
+          value: "443"
+      serviceAccountName: greeting-controller-sa
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: greeting-controller-sa
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: greeting-controller-clusterrole
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "namespaces"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["hy548.csd.uoc.gr"]
+  resources: ["greetings"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: greeting-controller-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: greeting-controller-sa
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: greeting-controller-clusterrole
+  apiGroup: rbac.authorization.k8s.io
