@@ -1,7 +1,7 @@
 ﻿# Assignment 4
 ## Exercise 1
 Provide the YAML that allows you to manage a custom resource of type "Fruit" with Kubernetes: We call this yaml fruit.yaml 
-
+```
 apiVersion: apiextensions.k8s.io/v1
 
 kind: CustomResourceDefinition
@@ -80,14 +80,14 @@ spec:
 `  `count: 3
 
 `  `grams: 980
-
+```
 Then we provide the kubectl commands needed to:
 
 1. Install the custom resource.
 
-   minikube start
+`   minikube start
 
-   kubectl apply -f fruit.yaml
+   kubectl apply -f fruit.yaml`
 
 1. Create the above instance.
 
